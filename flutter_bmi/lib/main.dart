@@ -30,24 +30,79 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _currentSliderValue = 80;
-  TextEditingController sliderController = TextEditingController();
-  int _currentSliderValue2 = 180;
-  TextEditingController sliderController2 = TextEditingController();
+  int _bodyWeight = 80;
+  TextEditingController weightController = TextEditingController();
+  int _bodyHeight = 180;
+  TextEditingController heightController = TextEditingController();
   double weight = 50;
   double height = 150;
   double bmi = 24.69;
 
+//Map für ExpansionPanels
+  Map<int, bool> expansionPanelStates = {
+    0: false,
+    1: false,
+    2: true,
+    3: false,
+    4: false,
+  };
+
+//Berechnung des BMI
   void calculateBmi() {
-    if (_currentSliderValue2 <= 0 || _currentSliderValue <= 0) {
+    if (_bodyHeight <= 0 || _bodyWeight <= 0) {
       setState(() {
         bmi = 1.0;
       });
     } else {
-      double newBMI =
-          _currentSliderValue / pow(_currentSliderValue2.toDouble() / 100, 2);
+      double newBmi = _bodyWeight / pow(_bodyHeight.toDouble() / 100, 2);
       setState(() {
-        bmi = newBMI;
+        bmi = newBmi;
+      });
+    }
+    updateExpansionPanelBasedOnBMI();
+  }
+
+// Öffnen und schließen von ExpansionPanels abhängig von BMI
+  void updateExpansionPanelBasedOnBMI() {
+    if (bmi < 17.5) {
+      setState(() {
+        expansionPanelStates[0] = true;
+        expansionPanelStates[1] = false;
+        expansionPanelStates[2] = false;
+        expansionPanelStates[3] = false;
+        expansionPanelStates[4] = false;
+      });
+    } else if (bmi >= 17.5 && bmi < 20) {
+      setState(() {
+        expansionPanelStates[0] = false;
+        expansionPanelStates[1] = true;
+        expansionPanelStates[2] = false;
+        expansionPanelStates[3] = false;
+        expansionPanelStates[4] = false;
+      });
+    } else if (bmi >= 20 && bmi < 26) {
+      setState(() {
+        expansionPanelStates[0] = false;
+        expansionPanelStates[1] = false;
+        expansionPanelStates[2] = true;
+        expansionPanelStates[3] = false;
+        expansionPanelStates[4] = false;
+      });
+    } else if (bmi >= 26 && bmi < 31) {
+      setState(() {
+        expansionPanelStates[0] = false;
+        expansionPanelStates[1] = false;
+        expansionPanelStates[2] = false;
+        expansionPanelStates[3] = true;
+        expansionPanelStates[4] = false;
+      });
+    } else {
+      setState(() {
+        expansionPanelStates[0] = false;
+        expansionPanelStates[1] = false;
+        expansionPanelStates[2] = false;
+        expansionPanelStates[3] = false;
+        expansionPanelStates[4] = true;
       });
     }
   }
@@ -55,8 +110,9 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        backgroundColor: const Color.fromARGB(255, 241, 239, 229),
         appBar: AppBar(
-          backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+          backgroundColor: Colors.green,
           title: Text(widget.title),
         ),
         body: Center(
@@ -68,9 +124,16 @@ class _MyHomePageState extends State<MyHomePage> {
               children: [
                 Expanded(
                   child: Container(
+                      width: 400.0,
                       color: Colors.green,
+
+                      //ExpansionPanels mit Informationen bezüglich Über- Unter- und Normalgewicht
                       child: ExpansionPanelList(
-                        expansionCallback: (int index, bool isExpanded) {},
+                        expansionCallback: (int index, bool isExpanded) {
+                          setState(() {
+                            expansionPanelStates[index] = !isExpanded;
+                          });
+                        },
                         children: [
                           ExpansionPanel(
                             headerBuilder:
@@ -84,7 +147,8 @@ class _MyHomePageState extends State<MyHomePage> {
                               subtitle: Text(
                                   'Achtung ein BMI-Wert unter 17,5 ist bedenklich.'),
                             ),
-                            isExpanded: false,
+                            isExpanded: expansionPanelStates[0] ?? false,
+                            canTapOnHeader: true,
                           ),
                           ExpansionPanel(
                             headerBuilder:
@@ -97,7 +161,8 @@ class _MyHomePageState extends State<MyHomePage> {
                               title: Text('Untergewicht'),
                               subtitle: Text('Ihr BMI ist sehr niedrig'),
                             ),
-                            isExpanded: false,
+                            isExpanded: expansionPanelStates[1] ?? false,
+                            canTapOnHeader: true,
                           ),
                           ExpansionPanel(
                             headerBuilder:
@@ -110,7 +175,8 @@ class _MyHomePageState extends State<MyHomePage> {
                               title: Text('Normalgewicht'),
                               subtitle: Text('Ihr BMI ist im gesunden Rahmen.'),
                             ),
-                            isExpanded: true,
+                            isExpanded: expansionPanelStates[2] ?? true,
+                            canTapOnHeader: true,
                           ),
                           ExpansionPanel(
                             headerBuilder:
@@ -123,7 +189,8 @@ class _MyHomePageState extends State<MyHomePage> {
                               title: Text('Leichtes Übergewicht'),
                               subtitle: Text('Ihr BMI ist leicht erhöht.'),
                             ),
-                            isExpanded: false,
+                            isExpanded: expansionPanelStates[3] ?? false,
+                            canTapOnHeader: true,
                           ),
                           ExpansionPanel(
                             headerBuilder:
@@ -137,62 +204,80 @@ class _MyHomePageState extends State<MyHomePage> {
                               subtitle:
                                   Text('Ihr BMI weist auf Übergewicht hin.'),
                             ),
-                            isExpanded: false,
+                            isExpanded: expansionPanelStates[4] ?? false,
+                            canTapOnHeader: true,
                           ),
                         ],
                       )),
                 ),
+
+                //Anpassbares Bild, Breite und Höhe abhängig vom Wert der Slider
                 Column(children: [
-                  Container(
-                    color: const Color.fromARGB(255, 255, 255, 255),
+                  Transform.scale(
+                    scaleX: _bodyWeight / 100,
+                    scaleY: _bodyHeight / 200,
+                    alignment: FractionalOffset.bottomCenter,
                     child: Image.asset('assets/images/man-shape.png'),
                   ),
+
+                  //Slider für Körpergewicht
                   const Text('Gewicht in Kilogramm'),
-                  Text('$_currentSliderValue'),
+                  Text('$_bodyWeight',
+                      style: const TextStyle(
+                        color: Colors.green,
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      )),
                   SizedBox(
-                    width: 500,
+                    width: 300,
                     child: Slider(
-                      value: _currentSliderValue.toDouble(),
+                      value: _bodyWeight.toDouble(),
                       min: 40,
                       max: 120,
                       divisions: 200,
                       activeColor: Colors.green,
-                      label: _currentSliderValue.round().toString(),
+                      label: _bodyWeight.round().toString(),
                       onChanged: (double value) {
                         setState(() {
-                          _currentSliderValue = value.toInt();
-                          sliderController.text =
-                              _currentSliderValue.toString();
+                          _bodyWeight = value.toInt();
+                          weightController.text = _bodyWeight.toString();
                           calculateBmi();
-                          print('Gewicht $_currentSliderValue kg');
                         });
                       },
                     ),
                   ),
                 ]),
+
+                //Rotierte Box um Slider für Körpergröße vertikal darzustellen
                 Expanded(
                   child: RotatedBox(
                       quarterTurns: 3,
                       child: Column(
                         children: [
                           const Text('Körpergröße in Zentimetern'),
-                          Text('$_currentSliderValue2'),
+                          Text(
+                            '$_bodyHeight',
+                            style: const TextStyle(
+                              color: Colors.green,
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
                           SizedBox(
                             width: 500,
                             child: Slider(
-                              value: _currentSliderValue2.toDouble(),
+                              value: _bodyHeight.toDouble(),
                               min: 160,
                               max: 200,
                               divisions: 200,
                               activeColor: Colors.green,
-                              label: _currentSliderValue2.round().toString(),
+                              label: _bodyHeight.round().toString(),
                               onChanged: (double value) {
                                 setState(() {
-                                  _currentSliderValue2 = value.toInt();
-                                  sliderController2.text =
-                                      _currentSliderValue2.toString();
+                                  _bodyHeight = value.toInt();
+                                  heightController.text =
+                                      _bodyHeight.toString();
                                   calculateBmi();
-                                  print(' Größe $_currentSliderValue2 cm');
                                 });
                               },
                             ),
@@ -203,7 +288,11 @@ class _MyHomePageState extends State<MyHomePage> {
               ],
             ),
             const Text('ihr Body-Mass-Index'),
-            Text('${bmi.toStringAsFixed(2)}'),
+            Text(bmi.toStringAsFixed(2),
+                style: const TextStyle(
+                    color: Colors.green,
+                    fontSize: 32,
+                    fontWeight: FontWeight.bold)),
           ],
         )));
   }
