@@ -114,139 +114,142 @@ class _MyHomePageState extends State<MyHomePage> {
         appBar: AppBar(
           backgroundColor: Colors.green,
           title: Text(widget.title),
+          toolbarHeight: 25.0,
         ),
-        body: Center(
+        body: SingleChildScrollView(
             child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            const SizedBox(height: 20),
             Row(
-              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Expanded(
-                  child: Container(
-                      width: 400.0,
-                      color: Colors.green,
-
-                      //ExpansionPanels mit Informationen bezüglich Über- Unter- und Normalgewicht
-                      child: ExpansionPanelList(
-                        expansionCallback: (int index, bool isExpanded) {
-                          setState(() {
-                            expansionPanelStates[index] = !isExpanded;
-                          });
-                        },
-                        children: [
-                          ExpansionPanel(
-                            headerBuilder:
-                                (BuildContext context, bool isExpanded) {
-                              return const ListTile(
-                                title: Text('< 17,5'),
-                              );
-                            },
-                            body: const ListTile(
-                              title: Text('kritisches Untergewicht'),
-                              subtitle: Text(
-                                  'Achtung ein BMI-Wert unter 17,5 ist bedenklich.'),
-                            ),
-                            isExpanded: expansionPanelStates[0] ?? false,
-                            canTapOnHeader: true,
-                          ),
-                          ExpansionPanel(
-                            headerBuilder:
-                                (BuildContext context, bool isExpanded) {
-                              return const ListTile(
-                                title: Text('17,5 - 20'),
-                              );
-                            },
-                            body: const ListTile(
-                              title: Text('Untergewicht'),
-                              subtitle: Text('Ihr BMI ist sehr niedrig'),
-                            ),
-                            isExpanded: expansionPanelStates[1] ?? false,
-                            canTapOnHeader: true,
-                          ),
-                          ExpansionPanel(
-                            headerBuilder:
-                                (BuildContext context, bool isExpanded) {
-                              return const ListTile(
-                                title: Text('20 - 26'),
-                              );
-                            },
-                            body: const ListTile(
-                              title: Text('Normalgewicht'),
-                              subtitle: Text('Ihr BMI ist im gesunden Rahmen.'),
-                            ),
-                            isExpanded: expansionPanelStates[2] ?? true,
-                            canTapOnHeader: true,
-                          ),
-                          ExpansionPanel(
-                            headerBuilder:
-                                (BuildContext context, bool isExpanded) {
-                              return const ListTile(
-                                title: Text('26 - 31'),
-                              );
-                            },
-                            body: const ListTile(
-                              title: Text('Leichtes Übergewicht'),
-                              subtitle: Text('Ihr BMI ist leicht erhöht.'),
-                            ),
-                            isExpanded: expansionPanelStates[3] ?? false,
-                            canTapOnHeader: true,
-                          ),
-                          ExpansionPanel(
-                            headerBuilder:
-                                (BuildContext context, bool isExpanded) {
-                              return const ListTile(
-                                title: Text('> 31'),
-                              );
-                            },
-                            body: const ListTile(
-                              title: Text('Übergewicht'),
-                              subtitle:
-                                  Text('Ihr BMI weist auf Übergewicht hin.'),
-                            ),
-                            isExpanded: expansionPanelStates[4] ?? false,
-                            canTapOnHeader: true,
-                          ),
-                        ],
-                      )),
-                ),
-
-                //Anpassbares Bild, Breite und Höhe abhängig vom Wert der Slider
-                Column(children: [
-                  Transform.scale(
-                    scaleX: _bodyWeight / 100,
-                    scaleY: _bodyHeight / 200,
-                    alignment: FractionalOffset.bottomCenter,
-                    child: Image.asset('assets/images/man-shape.png'),
-                  ),
-
-                  //Slider für Körpergewicht
-                  const Text('Gewicht in Kilogramm'),
-                  Text('$_bodyWeight',
-                      style: const TextStyle(
-                        color: Colors.green,
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                      )),
-                  SizedBox(
-                    width: 300,
-                    child: Slider(
-                      value: _bodyWeight.toDouble(),
-                      min: 40,
-                      max: 120,
-                      divisions: 200,
-                      activeColor: Colors.green,
-                      label: _bodyWeight.round().toString(),
-                      onChanged: (double value) {
+                Container(
+                    color: Colors.red,
+                    width: 200,
+                    //ExpansionPanels mit Informationen bezüglich Über- Unter- und Normalgewicht
+                    child: ExpansionPanelList(
+                      expansionCallback: (int index, bool isExpanded) {
                         setState(() {
-                          _bodyWeight = value.toInt();
-                          weightController.text = _bodyWeight.toString();
-                          calculateBmi();
+                          expansionPanelStates[index] = !isExpanded;
                         });
                       },
-                    ),
-                  ),
-                ]),
+                      children: [
+                        ExpansionPanel(
+                          headerBuilder:
+                              (BuildContext context, bool isExpanded) {
+                            return const ListTile(
+                              title: Text('< 17,5'),
+                            );
+                          },
+                          body: const ListTile(
+                            title: Text('kritisches Untergewicht'),
+                            subtitle: Text(
+                                'Achtung ein BMI-Wert unter 17,5 ist bedenklich.'),
+                          ),
+                          isExpanded: expansionPanelStates[0] ?? false,
+                          canTapOnHeader: true,
+                        ),
+                        ExpansionPanel(
+                          headerBuilder:
+                              (BuildContext context, bool isExpanded) {
+                            return const ListTile(
+                              title: Text('17,5 - 20'),
+                            );
+                          },
+                          body: const ListTile(
+                            title: Text('Untergewicht'),
+                            subtitle: Text('Ihr BMI ist sehr niedrig'),
+                          ),
+                          isExpanded: expansionPanelStates[1] ?? false,
+                          canTapOnHeader: true,
+                        ),
+                        ExpansionPanel(
+                          headerBuilder:
+                              (BuildContext context, bool isExpanded) {
+                            return const ListTile(
+                              title: Text('20 - 26'),
+                            );
+                          },
+                          body: const ListTile(
+                            title: Text('Normalgewicht'),
+                            subtitle: Text('Ihr BMI ist im gesunden Rahmen.'),
+                          ),
+                          isExpanded: expansionPanelStates[2] ?? true,
+                          canTapOnHeader: true,
+                        ),
+                        ExpansionPanel(
+                          headerBuilder:
+                              (BuildContext context, bool isExpanded) {
+                            return const ListTile(
+                              title: Text('26 - 31'),
+                            );
+                          },
+                          body: const ListTile(
+                            title: Text('Leichtes Übergewicht'),
+                            subtitle: Text('Ihr BMI ist leicht erhöht.'),
+                          ),
+                          isExpanded: expansionPanelStates[3] ?? false,
+                          canTapOnHeader: true,
+                        ),
+                        ExpansionPanel(
+                          headerBuilder:
+                              (BuildContext context, bool isExpanded) {
+                            return const ListTile(
+                              title: Text('> 31'),
+                            );
+                          },
+                          body: const ListTile(
+                            title: Text('Übergewicht'),
+                            subtitle:
+                                Text('Ihr BMI weist auf Übergewicht hin.'),
+                          ),
+                          isExpanded: expansionPanelStates[4] ?? false,
+                          canTapOnHeader: true,
+                        ),
+                      ],
+                    )),
+
+                //Anpassbares Bild, Breite und Höhe abhängig vom Wert der Slider
+                Expanded(
+                  child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Transform.scale(
+                          scaleX: _bodyWeight / 180,
+                          scaleY: _bodyHeight / 360,
+                          alignment: FractionalOffset.bottomCenter,
+                          child: Image.asset('assets/images/man-shape.png'),
+                        ),
+
+                        //Slider für Körpergewicht
+                        const Text('Gewicht in Kilogramm'),
+                        Text('$_bodyWeight',
+                            style: const TextStyle(
+                              color: Colors.green,
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                            )),
+                        SizedBox(
+                          width: 200,
+                          child: Slider(
+                            value: _bodyWeight.toDouble(),
+                            min: 40,
+                            max: 120,
+                            divisions: 200,
+                            activeColor: Colors.green,
+                            label: _bodyWeight.round().toString(),
+                            onChanged: (double value) {
+                              setState(() {
+                                _bodyWeight = value.toInt();
+                                weightController.text = _bodyWeight.toString();
+                                calculateBmi();
+                              });
+                            },
+                          ),
+                        ),
+                      ]),
+                ),
 
                 //Rotierte Box um Slider für Körpergröße vertikal darzustellen
                 Expanded(
@@ -264,7 +267,7 @@ class _MyHomePageState extends State<MyHomePage> {
                             ),
                           ),
                           SizedBox(
-                            width: 500,
+                            width: 200,
                             child: Slider(
                               value: _bodyHeight.toDouble(),
                               min: 160,
